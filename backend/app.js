@@ -1,10 +1,25 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+
+
+
+const Post = require('./models/post');
 
 const app = express();
 
+const password = process.env.CHARLES_PASSWORD;
+
+mongoose.connect(`mongodb+srv://charles:${password}@cluster0-njskc.mongodb.net/node-angular?retryWrites=true`).then(() => {
+  console.log("connected to database")
+}).catch((error) => {
+  console.log("Error happened: ", error)
+})
+
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -20,30 +35,26 @@ app.use((req, res, next) => {
 });
 
 app.post('/api/posts', (req, res, next) => {
-  const post = req.body;
-  console.log(post);
+  const post = new Post({
+    title: req.body.title,
+    content: req.body.content
+  })
+  // req.body;
+  post.save();
+
   res.status(201).json({
-    message: 'Post added successfully'
+    message: `Post added successfully: ${post}`
   });
 });
 
 app.get('/api/posts', (req, res, next) => {
-  const posts = [
-    {
-      id: 'alsdkfjasldf',
-      title: 'First server-side post',
-      content: 'This is coming from the server'
-    },
-    {
-      id: 'qwperi1932854nf',
-      title: 'Second server-side post',
-      content: 'This is coming from the server!'
-    }
-  ];
-  res.status(200).json({
-    message: 'Posts fetched succesfully!',
-    posts
+  Post.find().then(posts => {
+    res.status(200).json({
+      message: 'Posts fetched succesfully!',
+      posts
+    });
   });
+
 });
 
 module.exports = app;
