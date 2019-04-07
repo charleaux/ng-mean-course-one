@@ -2,6 +2,7 @@ import { Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 import { Post } from './post.model';
 
@@ -10,7 +11,7 @@ export class PostsService {
   private posts: Post[] = [];
   private postsUpdated: Subject<Post[]> = new Subject<Post[]>();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   getPosts() {
     this.http
