@@ -1,10 +1,16 @@
 {
   "test": {
     "PORT": 3000,
-    "PASSWORD": ""
+    "PASSWORD": "",
+    "MONGOHOST": "cluster0-njskc.mongodb.net",
+    "MONGODATABASE": "node-angular",
+    "MONGOUSER": "charles"
   },
   "development": {
     "PORT": 3000,
-    "PASSWORD": ""
+    "PASSWORD": "",
+    "MONGOHOST": "cluster0-njskc.mongodb.net",
+    "MONGODATABASE": "node-angular",
+    "MONGOUSER": "charles"
   }
 }

@@ -3,6 +3,12 @@
 # backend passwords
 /backend/config.json
 
+# backend images
+/backend/images/*.jpg
+/backend/images/*.jpeg
+/backend/images/*.png
+/backend/images/*.gif
+
 # compiled output
 /dist
 /tmp
