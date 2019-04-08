@@ -4,6 +4,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { PostsService } from '../posts.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Post } from '../post.model';
+import { mimeType } from './mime-type.validator';
 
 @Component({
   selector: 'app-post-create',
@@ -14,6 +15,7 @@ export class PostCreateComponent implements OnInit {
   post: Post;
   isLoading = false;
   form: FormGroup;
+  imagePreview: string;
   private mode: string;
   private postId: string;
 
@@ -30,6 +32,10 @@ export class PostCreateComponent implements OnInit {
       }),
       content: new FormControl(undefined, {
         validators: [Validators.required, Validators.minLength(3)]
+      }),
+      image: new FormControl(undefined, {
+        validators: [Validators.required],
+        asyncValidators: [mimeType]
       })
     });
     this.mode = 'create';
@@ -53,7 +59,8 @@ export class PostCreateComponent implements OnInit {
               };
               this.form.setValue({
                 title: this.post.title,
-                content: this.post.content
+                content: this.post.content,
+                image: 'NO-FILE'
               });
             }
           );
@@ -70,7 +77,11 @@ export class PostCreateComponent implements OnInit {
     }
     this.isLoading = true;
     if (this.mode === 'create') {
-      this.postsService.addPost(this.form.value.title, this.form.value.content);
+      this.postsService.addPost(
+        this.form.value.title,
+        this.form.value.content,
+        this.form.value.image
+      );
     } else {
       this.postsService.updatePost(
         this.postId,
@@ -80,5 +91,16 @@ export class PostCreateComponent implements OnInit {
     }
     this.form.reset();
     this.router.navigate(['/']);
+  }
+
+  onImagePicked(event: Event) {
+    const file = (event.target as HTMLInputElement).files[0];
+    this.form.patchValue({ image: file });
+    this.form.get('image').updateValueAndValidity();
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagePreview = reader.result as string;
+    };
+    reader.readAsDataURL(file);
   }
 }
