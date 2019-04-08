@@ -8,7 +8,7 @@ const Post = require('./models/post');
 
 const app = express();
 
-const password = process.env.CHARLES_PASSWORD;
+const password = process.env.PASSWORD;
 
 mongoose.connect(`mongodb+srv://charles:${password}@cluster0-njskc.mongodb.net/node-angular?retryWrites=true`).then(() => {
   console.log("connected to database")

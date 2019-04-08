@@ -1,3 +1,5 @@
+require('./backend/config');
+
 const http = require('http');
 const debug = require('debug')('node-angular');
 
