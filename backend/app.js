@@ -10,10 +10,11 @@ const mongoUser = process.env.MONGOUSER;
 const password = process.env.PASSWORD;
 const mongoHost = process.env.MONGOHOST;
 const mongoDatabase = process.env.MONGODATABASE;
+const mongoUrlPrefix = process.env.MONGOURLPREFIX
 
 mongoose
   .connect(
-    `mongodb://${mongoUser}:${password}@${mongoHost}/${mongoDatabase}?retryWrites=true`
+    `${mongoUrlPrefix}://${mongoUser}:${password}@${mongoHost}/${mongoDatabase}?retryWrites=true`
   )
   .then(() => {
     console.log('connected to database');

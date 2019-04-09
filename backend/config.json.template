@@ -4,13 +4,15 @@
     "PASSWORD": "",
     "MONGOHOST": "cluster0-njskc.mongodb.net",
     "MONGODATABASE": "node-angular",
-    "MONGOUSER": "charles"
+    "MONGOUSER": "charles",
+    "MONGOURLPREFIX": "mongodb+srv"
   },
   "development": {
     "PORT": 3000,
     "PASSWORD": "",
     "MONGOHOST": "cluster0-njskc.mongodb.net",
     "MONGODATABASE": "node-angular",
-    "MONGOUSER": "charles"
+    "MONGOUSER": "charles",
+    "MONGOURLPREFIX": "mongodb+srv"
   }
 }
