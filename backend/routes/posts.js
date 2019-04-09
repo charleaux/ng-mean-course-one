@@ -31,32 +31,44 @@ const storage = multer.diskStorage({
 router.post('', multer({
   storage
 }).single("image"), (req, res, next) => {
+  const url = req.protocol + '://' + req.get("host");
   const post = new Post({
     title: req.body.title,
-    content: req.body.content
+    content: req.body.content,
+    imagePath: url + '/images/' + req.file.filename
   })
   // req.body;
   post.save().then(createdPost => {
     res.status(201).json({
       message: `Post added successfully: ${post}`,
-      postId: createdPost._id
+      post: {
+        id: createdPost._id,
+        title: createdPost.title,
+        content: createdPost.content,
+        imagePath: createdPost.imagePath
+      }
     });
   });
 });
 
-router.put('/:id', (req, res, next) => {
+router.put('/:id', multer({
+  storage
+}).single("image"), (req, res, next) => {
+  let imagePath = req.body.imagePath;
+  if (req.file) {
+    const url = req.protocol + '://' + req.get("host");
+    imagePath = url + '/images/' + req.file.filename
+  }
   const post = new Post({
     _id: req.params.id,
     title: req.body.title,
-    content: req.body.content
+    content: req.body.content,
+    imagePath
   })
   Post.updateOne({
     _id: req.params.id
   }, post).then((result) => {
-    console.log(result);
-    res.status(200).json({
-      message: "Update Successful!"
-    })
+    res.status(200).json(post)
   })
 
 })
@@ -73,10 +85,7 @@ router.get('', (req, res, next) => {
 router.get('/:id', (req, res, next) => {
   Post.findById(req.params.id).then(post => {
     if (post !== undefined) {
-      res.status(200).json({
-        message: 'Post fetched succesfully!',
-        post
-      });
+      res.status(200).json(post);
     } else {
       res.status(404).json({
         message: 'Posts not found!'
@@ -89,7 +98,6 @@ router.delete('/:id', (req, res, next) => {
   Post.deleteOne({
     _id: req.params.id
   }).then((result) => {
-    console.log(result);
     res.status(200).json({
       message: "Post deleted!"
     });
