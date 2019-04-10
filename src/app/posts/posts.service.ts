@@ -9,29 +9,41 @@ import { stringify } from '@angular/core/src/util';
 
 @Injectable({ providedIn: 'root' })
 export class PostsService {
+  private postCount: number;
   private posts: Post[] = [];
-  private postsUpdated: Subject<Post[]> = new Subject<Post[]>();
+
+  private postsUpdated = new Subject<{ posts: Post[]; postCount: number }>();
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  getPosts() {
+  getPosts(postsPerPage: number, currentPage: number) {
+    const queryParams = `?pagesize=${postsPerPage}&page=${currentPage}`;
     this.http
-      .get<{ message: string; posts: any }>('http://localhost:3000/api/posts')
+      .get<{ message: string; posts: any; maxPosts: number }>(
+        'http://localhost:3000/api/posts' + queryParams
+      )
       .pipe(
         map(postData => {
-          return postData.posts.map(post => {
-            return {
-              title: post.title,
-              content: post.content,
-              id: post._id,
-              imagePath: post.imagePath
-            };
-          });
+          return {
+            posts: postData.posts.map(post => {
+              return {
+                title: post.title,
+                content: post.content,
+                id: post._id,
+                imagePath: post.imagePath
+              };
+            }),
+            maxPosts: postData.maxPosts
+          };
         })
       )
-      .subscribe(transformedPost => {
-        this.posts = transformedPost;
-        this.postsUpdated.next([...this.posts]);
+      .subscribe(transformedPostData => {
+        this.postCount = transformedPostData.maxPosts;
+        this.posts = transformedPostData.posts;
+        this.postsUpdated.next({
+          posts: [...this.posts],
+          postCount: this.postCount
+        });
       });
   }
 
@@ -61,7 +73,10 @@ export class PostsService {
       .subscribe(responseData => {
         const post: Post = responseData.post;
         this.posts.push(post);
-        this.postsUpdated.next([...this.posts]);
+        this.postsUpdated.next({
+          posts: [...this.posts],
+          postCount: this.postCount + 1
+        });
       });
   }
 
@@ -96,18 +111,15 @@ export class PostsService {
           };
           updatedPosts[oldPostIndex] = post;
           this.posts = [...updatedPosts];
-          this.postsUpdated.next([...this.posts]);
+          this.postsUpdated.next({
+            posts: [...this.posts],
+            postCount: this.postCount
+          });
         }
       );
   }
 
   deletePost(postId: string) {
-    this.http
-      .delete('http://localhost:3000/api/posts/' + postId)
-      .subscribe(() => {
-        const updatedPosts = this.posts.filter(post => post.id !== postId);
-        this.posts = [...updatedPosts];
-        this.postsUpdated.next([...this.posts]);
-      });
+    return this.http.delete('http://localhost:3000/api/posts/' + postId);
   }
 }
