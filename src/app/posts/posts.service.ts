@@ -79,19 +79,26 @@ export class PostsService {
 
     this.http
       .put('http://localhost:3000/api/posts/' + id, postData)
-      .subscribe(response => {
-        const updatedPosts = [...this.posts];
-        const oldPostIndex = updatedPosts.findIndex(p => p.id === id);
-        const post: Post = {
-          id,
-          title,
-          content,
-          imagePath: response.imagePath
-        };
-        updatedPosts[oldPostIndex] = post;
-        this.posts = [...updatedPosts];
-        this.postsUpdated.next([...this.posts]);
-      });
+      .subscribe(
+        (response: {
+          content: string;
+          imagePath: string;
+          title: string;
+          _id: string;
+        }) => {
+          const updatedPosts = [...this.posts];
+          const oldPostIndex = updatedPosts.findIndex(p => p.id === id);
+          const post: Post = {
+            id,
+            title,
+            content,
+            imagePath: response.imagePath
+          };
+          updatedPosts[oldPostIndex] = post;
+          this.posts = [...updatedPosts];
+          this.postsUpdated.next([...this.posts]);
+        }
+      );
   }
 
   deletePost(postId: string) {
