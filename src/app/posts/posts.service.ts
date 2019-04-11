@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 
 import { Post } from './post.model';
 import { stringify } from '@angular/core/src/util';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class PostsService {

@@ -5,7 +5,8 @@
     "MONGOHOST": "cluster0-njskc.mongodb.net",
     "MONGODATABASE": "node-angular",
     "MONGOUSER": "charles",
-    "MONGOURLPREFIX": "mongodb+srv"
+    "MONGOURLPREFIX": "mongodb+srv",
+    "JWTSECRET": ""
   },
   "development": {
     "PORT": 3000,
@@ -13,6 +14,7 @@
     "MONGOHOST": "cluster0-njskc.mongodb.net",
     "MONGODATABASE": "node-angular",
     "MONGOUSER": "charles",
-    "MONGOURLPREFIX": "mongodb+srv"
+    "MONGOURLPREFIX": "mongodb+srv",
+    "JWTSECRET": ""
   }
 }
