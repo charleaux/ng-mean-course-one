@@ -14,31 +14,48 @@ router.post('/signup', async (req, res, next) => {
       password: hash
     });
     const result = await user.save();
-    res.status(201).json({ message: 'User created!', result });
+    res.status(201).json({
+      message: 'User created!',
+      result
+    });
   } catch (error) {
-    res.status(500).json({ error });
+    res.status(500).json({
+      error
+    });
   }
 });
 
 router.post('/login', async (req, res, next) => {
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({
+      email: req.body.email
+    });
     if (!user) {
-      return res.status(404).json({ message: 'User email not found.' });
+      return res.status(404).json({
+        message: 'User email not found.'
+      });
     }
 
     const result = await bcrypt.compare(req.body.password, user.password);
     if (!result) {
-      return res.status(401).json({ message: 'Auth failed' });
+      return res.status(401).json({
+        message: 'Auth failed'
+      });
     }
 
-    const token = jwt.sign(
-      { email: user.email, userId: user._id },
-      process.env.JWTSECRET,
-      { expiresIn: '1h' }
+    const token = jwt.sign({
+        email: user.email,
+        userId: user._id
+      },
+      process.env.JWTSECRET, {
+        expiresIn: '1h'
+      }
     );
 
-    res.status(200).json({ token });
+    res.status(200).json({
+      token,
+      expiresIn: 3600
+    });
   } catch (err) {
     let errorMessage = {
       message: 'Something went wrong! Check the server logs...'
@@ -51,7 +68,9 @@ router.post('/login', async (req, res, next) => {
       };
     }
     console.log('Error thrown: ', err);
-    res.status(500).json({ errorMessage });
+    res.status(500).json({
+      errorMessage
+    });
   }
 });
 
